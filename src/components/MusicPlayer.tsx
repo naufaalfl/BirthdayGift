@@ -120,26 +120,26 @@ const MusicPlayer = () => {
   return (
     <>
       {/* Mobile Compact Player - Fixed at bottom */}
-      <div className={`fixed bottom-4 left-4 right-4 z-40 sm:hidden transition-all duration-300 ${
+      <div className={`fixed bottom-4 left-4 right-4 z-50 sm:hidden transition-all duration-300 ${
         isVisible ? 'translate-y-0' : 'translate-y-full'
       }`}>
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-3 shadow-xl border border-white/30">
+        <div className="bg-white/98 backdrop-blur-lg rounded-2xl p-4 shadow-2xl border-2 border-pink-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <button
                 onClick={toggleSpotify}
-                className="flex-shrink-0 p-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-lg"
+                className="flex-shrink-0 p-3 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:scale-110 active:scale-95"
               >
-                <Music className={`w-4 h-4 ${showSpotify ? 'animate-pulse' : ''}`} />
+                <Music className={`w-5 h-5 ${showSpotify ? 'animate-pulse' : ''}`} />
               </button>
               
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-700 font-medium truncate">🎵 Tumblr Girl 2 - G-Eazy</p>
+                <p className="text-sm text-gray-800 font-bold truncate">🎵 Tumblr Girl 2 - G-Eazy</p>
                 {isPlaying && autoplayTriggered && (
-                  <p className="text-xs text-green-600 font-medium">▶️ Playing...</p>
+                  <p className="text-xs text-green-600 font-semibold">▶️ Playing...</p>
                 )}
                 {!autoplayTriggered && (
-                  <p className="text-xs text-yellow-600 font-medium">👆 Tap to start</p>
+                  <p className="text-xs text-yellow-600 font-semibold">👆 Tap to start</p>
                 )}
               </div>
             </div>
@@ -147,35 +147,35 @@ const MusicPlayer = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleMute}
-                className="p-2 rounded-full bg-white/20 text-gray-700 hover:bg-white/30 transition-all duration-300"
+                className="p-3 rounded-full bg-white/30 text-gray-700 hover:bg-white/50 transition-all duration-300 shadow-md hover:scale-110 active:scale-95 border border-gray-200"
               >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
 
               {!autoplayTriggered && (
                 <button
                   onClick={forcePlay}
-                  className="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-all duration-300"
+                  className="p-3 rounded-full bg-green-500 text-white hover:bg-green-600 transition-all duration-300 shadow-lg hover:scale-110 active:scale-95"
                   title="Force Play Music"
                 >
-                  <Play className="w-4 h-4" />
+                  <Play className="w-5 h-5" />
                 </button>
               )}
 
               <button
                 onClick={toggleExpand}
-                className="p-2 rounded-full bg-white/20 text-gray-700 hover:bg-white/30 transition-all duration-300"
+                className="p-3 rounded-full bg-white/30 text-gray-700 hover:bg-white/50 transition-all duration-300 shadow-md hover:scale-110 active:scale-95 border border-gray-200"
               >
-                {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+                {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
               </button>
             </div>
           </div>
           
           {/* Expanded Spotify Player for Mobile */}
           <div className={`transition-all duration-300 overflow-hidden ${
-            isExpanded && showSpotify ? 'max-h-32 opacity-100 mt-3' : 'max-h-0 opacity-0'
+            isExpanded && showSpotify ? 'max-h-32 opacity-100 mt-4' : 'max-h-0 opacity-0'
           }`}>
-            <div className="bg-white/50 backdrop-blur-lg rounded-xl p-2 shadow-lg border border-white/30">
+            <div className="bg-white/70 backdrop-blur-lg rounded-xl p-2 shadow-lg border border-white/50">
               <iframe 
                 ref={iframeRef}
                 style={{borderRadius: "8px"}} 
@@ -193,12 +193,22 @@ const MusicPlayer = () => {
       </div>
 
       {/* Mobile Toggle Button - Show when player is hidden */}
-      <div className={`fixed bottom-4 right-4 z-40 sm:hidden transition-all duration-300 ${
+      <div className={`fixed bottom-4 right-4 z-50 sm:hidden transition-all duration-300 ${
         isVisible ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}>
         <button
           onClick={toggleVisibility}
-          className="p-3 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          className="p-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 active:scale-95 border-2 border-white/20"
+        >
+          <Music className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Mobile Floating Music Button - Always visible for easy access */}
+      <div className="fixed bottom-20 left-4 z-50 sm:hidden">
+        <button
+          onClick={toggleVisibility}
+          className="p-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 border border-white/30"
         >
           <Music className="w-5 h-5" />
         </button>

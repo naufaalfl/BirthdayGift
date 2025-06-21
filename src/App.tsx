@@ -169,9 +169,9 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Main Content with bottom padding for mobile music player */}
+      {/* Main Content with top and bottom padding */}
       <motion.div 
-        className={`transition-all duration-1000 pb-20 sm:pb-0 ${showContent ? 'opacity-100' : 'opacity-0'}`}
+        className={`transition-all duration-1000 pt-24 pb-20 sm:pb-0 ${showContent ? 'opacity-100' : 'opacity-0'}`}
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: showContent ? 1 : 0 }}
         transition={{ duration: 1, delay: 0.5 }}

@@ -22,6 +22,7 @@ function App() {
   const [currentSection, setCurrentSection] = useState('hero');
   const [showFireworks, setShowFireworks] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,6 +32,30 @@ function App() {
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Handle user interaction untuk autoplay music
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      if (!userInteracted) {
+        setUserInteracted(true);
+        // Trigger music autoplay setelah interaksi pengguna
+        const musicEvent = new CustomEvent('startMusic');
+        window.dispatchEvent(musicEvent);
+      }
+    };
+
+    // Listen untuk berbagai jenis interaksi pengguna
+    const events = ['click', 'touchstart', 'keydown', 'scroll'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+    };
+  }, [userInteracted]);
 
   const loadingVariants = {
     initial: { scale: 0, rotate: 0 },
@@ -124,9 +149,9 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
+      {/* Main Content with bottom padding for mobile music player */}
       <motion.div 
-        className={`transition-all duration-1000 ${showContent ? 'opacity-100' : 'opacity-0'}`}
+        className={`transition-all duration-1000 pb-20 sm:pb-0 ${showContent ? 'opacity-100' : 'opacity-0'}`}
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: showContent ? 1 : 0 }}
         transition={{ duration: 1, delay: 0.5 }}

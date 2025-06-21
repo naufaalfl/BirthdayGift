@@ -6,26 +6,14 @@ const MusicPlayer = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoplayTriggered, setAutoplayTriggered] = useState(false);
-  const [autoplayAttempted, setAutoplayAttempted] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Initial autoplay attempt
+  // Auto-start music when component mounts
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSpotify(true);
-      setIsPlaying(true);
-      setAutoplayAttempted(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Listen untuk custom event startMusic
-  useEffect(() => {
-    const handleStartMusic = () => {
+    const startMusic = () => {
       if (!autoplayTriggered) {
         setAutoplayTriggered(true);
         setShowSpotify(true);
@@ -36,35 +24,46 @@ const MusicPlayer = () => {
           const baseUrl = "https://open.spotify.com/embed/track/4Fv6wNYUixnYkj3Dgfrls8?utm_source=generator&theme=0";
           const newSrc = `${baseUrl}&autoplay=1`;
           iframeRef.current.src = newSrc;
+          
+          // Force reload after a short delay to ensure autoplay works
+          setTimeout(() => {
+            if (iframeRef.current) {
+              iframeRef.current.src = newSrc;
+            }
+          }, 100);
         }
       }
     };
 
-    window.addEventListener('startMusic', handleStartMusic);
-    
+    // Try to start music immediately
+    startMusic();
+
+    // Also listen for user interactions
+    const handleUserInteraction = () => {
+      startMusic();
+    };
+
+    const events = ['click', 'touchstart', 'keydown', 'scroll', 'mousemove'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
+
+    // Listen for custom startMusic event
+    window.addEventListener('startMusic', startMusic);
+
+    // Fallback timer
+    const fallbackTimer = setTimeout(() => {
+      startMusic();
+    }, 2000);
+
     return () => {
-      window.removeEventListener('startMusic', handleStartMusic);
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+      window.removeEventListener('startMusic', startMusic);
+      clearTimeout(fallbackTimer);
     };
   }, [autoplayTriggered]);
-
-  // Fallback autoplay setelah beberapa detik
-  useEffect(() => {
-    if (autoplayAttempted && !autoplayTriggered) {
-      const fallbackTimer = setTimeout(() => {
-        setAutoplayTriggered(true);
-        setShowSpotify(true);
-        setIsPlaying(true);
-        
-        if (iframeRef.current) {
-          const baseUrl = "https://open.spotify.com/embed/track/4Fv6wNYUixnYkj3Dgfrls8?utm_source=generator&theme=0";
-          const newSrc = `${baseUrl}&autoplay=1`;
-          iframeRef.current.src = newSrc;
-        }
-      }, 5000); // 5 detik fallback
-
-      return () => clearTimeout(fallbackTimer);
-    }
-  }, [autoplayAttempted, autoplayTriggered]);
 
   const toggleSpotify = () => {
     setShowSpotify(!showSpotify);
@@ -93,6 +92,13 @@ const MusicPlayer = () => {
       const baseUrl = "https://open.spotify.com/embed/track/4Fv6wNYUixnYkj3Dgfrls8?utm_source=generator&theme=0";
       const newSrc = `${baseUrl}&autoplay=1`;
       iframeRef.current.src = newSrc;
+      
+      // Force reload after a short delay to ensure autoplay works
+      setTimeout(() => {
+        if (iframeRef.current) {
+          iframeRef.current.src = newSrc;
+        }
+      }, 100);
     }
   };
 

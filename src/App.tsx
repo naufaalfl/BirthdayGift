@@ -41,19 +41,39 @@ function App() {
         // Trigger music autoplay setelah interaksi pengguna
         const musicEvent = new CustomEvent('startMusic');
         window.dispatchEvent(musicEvent);
+        
+        // Also try direct iframe refresh
+        const iframes = document.querySelectorAll('iframe[src*="spotify"]');
+        iframes.forEach(iframe => {
+          const currentSrc = iframe.getAttribute('src');
+          if (currentSrc && !currentSrc.includes('autoplay=1')) {
+            const newSrc = currentSrc.includes('?') 
+              ? `${currentSrc}&autoplay=1` 
+              : `${currentSrc}?autoplay=1`;
+            iframe.setAttribute('src', newSrc);
+          }
+        });
       }
     };
 
     // Listen untuk berbagai jenis interaksi pengguna
-    const events = ['click', 'touchstart', 'keydown', 'scroll'];
+    const events = ['click', 'touchstart', 'keydown', 'scroll', 'mousemove'];
     events.forEach(event => {
       document.addEventListener(event, handleUserInteraction, { once: true });
     });
+
+    // Fallback timer untuk autoplay
+    const fallbackTimer = setTimeout(() => {
+      if (!userInteracted) {
+        handleUserInteraction();
+      }
+    }, 3000);
 
     return () => {
       events.forEach(event => {
         document.removeEventListener(event, handleUserInteraction);
       });
+      clearTimeout(fallbackTimer);
     };
   }, [userInteracted]);
 

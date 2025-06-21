@@ -31,8 +31,22 @@ const WishesSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name || !wish) return; // Mencegah submit kosong
+
     setIsSubmitting(true);
-    // Handle form submission
+
+    const newWish = {
+      icon: <Heart className="w-8 h-8 text-pink-500" />,
+      title: name,
+      message: wish,
+    };
+
+    setTimeout(() => {
+      setSubmittedWishes([newWish, ...submittedWishes]);
+      setName('');
+      setWish('');
+      setIsSubmitting(false);
+    }, 1000); // Simulasi proses pengiriman
   };
 
   return (
